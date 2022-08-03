@@ -6,6 +6,7 @@ class Board{
         this.promotions = [];
         this.legalMoves = [];
         this.turn = true;
+        this.checkmate = false
         this.initializePieces();
         this.promotion = {
             promotingState: false,
@@ -124,8 +125,12 @@ class Board{
                 }
             }
             for(let i = 0; i < this.bp.length; i++){
+                // Can't Castle Through Check
                 if(this.bp[i].canMoveTo(this, 5, 7) || this.isPieceAt(5, 7)) return false;
                 if(this.bp[i].canMoveTo(this, 6, 7) || this.isPieceAt(6, 7)) return false;
+
+                // Can't Castle Out of Check
+                if(this.bp[i].canMoveTo(this, 4, 7)) return false
             }
         }
         else{
@@ -138,8 +143,12 @@ class Board{
                 }
             }
             for(let i = 0; i < this.wp.length; i++){
+                // Can't Castle Through Check
                 if(this.wp[i].canMoveTo(this, 5, 0) || this.isPieceAt(5, 0)) return false;
                 if(this.wp[i].canMoveTo(this, 6, 0) || this.isPieceAt(6, 0)) return false;
+
+                // Can't Castle Out of Check
+                if(this.wp[i].canMoveTo(this, 4, 0)) return false
             }
         }
         return validKing && validRook;
@@ -157,9 +166,13 @@ class Board{
                 }
             }
             for(let i = 0; i < this.bp.length; i++){
+                // Can't Castle Through Check
                 if(this.bp[i].canMoveTo(this, 3, 7) || this.isPieceAt(3, 7)) return false;
                 if(this.bp[i].canMoveTo(this, 2, 7) || this.isPieceAt(2, 7)) return false;
                 if(this.bp[i].canMoveTo(this, 1, 7) || this.isPieceAt(1, 7)) return false;
+
+                // Can't Castle Out of Check
+                if(this.bp[i].canMoveTo(this, 4, 7)) return false
             }
         }
         else{
@@ -172,9 +185,13 @@ class Board{
                 }
             }
             for(let i = 0; i < this.wp.length; i++){
+                // Can't Castle Through Check
                 if(this.wp[i].canMoveTo(this, 3, 0) || this.isPieceAt(3, 0)) return false;
                 if(this.wp[i].canMoveTo(this, 2, 0) || this.isPieceAt(2, 0)) return false;
                 if(this.wp[i].canMoveTo(this, 1, 0) || this.isPieceAt(1, 0)) return false;
+
+                // Can't Castle Out of Check
+                if(this.wp[i].canMoveTo(this, 4, 0)) return false
             }
         }
         return validKing && validRook;
@@ -379,6 +396,11 @@ class Board{
         this.clearMoves();
         this.clearEnPassants();
         this.findLegalMoves();
+        if(this.legalMoves.length == 0) 
+            {
+                this.checkmate = true
+                console.log("CHECKMATE!")
+            }
         console.log(this.legalMoves);
     }
        

@@ -1,7 +1,7 @@
 /*
 Checklist: 
 En passant: done
-Pawn promotion: haven't started
+Pawn promotion: done
 Castling: done
 Move tracking: haven't started
 Board Flipping: Haven't started
