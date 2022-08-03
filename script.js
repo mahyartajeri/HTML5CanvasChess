@@ -54,30 +54,30 @@ function setup(){
 
 window.onload = function(){
     wKing = new Image();
-    wKing.src = "/Assets/white_king.png";
+    wKing.src = "./Assets/white_king.png";
     wQueen = new Image();
-    wQueen.src = "/Assets/white_queen.png";
+    wQueen.src = "./Assets/white_queen.png";
     wRook = new Image();
-    wRook.src = "/Assets/white_rook.png";
+    wRook.src = "./Assets/white_rook.png";
     wKnight = new Image();
-    wKnight.src = "/Assets/white_knight.png";
+    wKnight.src = "./Assets/white_knight.png";
     wBishop = new Image();
-    wBishop.src = "/Assets/white_bishop.png";
+    wBishop.src = "./Assets/white_bishop.png";
     wPawn = new Image();
-    wPawn.src = "/Assets/white_pawn.png";
+    wPawn.src = "./Assets/white_pawn.png";
 
     bKing = new Image();
-    bKing.src = "/Assets/black_king.png";
+    bKing.src = "./Assets/black_king.png";
     bQueen = new Image();
-    bQueen.src = "/Assets/black_queen.png";
+    bQueen.src = "./Assets/black_queen.png";
     bRook = new Image();
-    bRook.src = "/Assets/black_rook.png";
+    bRook.src = "./Assets/black_rook.png";
     bKnight = new Image();
-    bKnight.src = "/Assets/black_knight.png";
+    bKnight.src = "./Assets/black_knight.png";
     bBishop = new Image();
-    bBishop.src = "/Assets/black_bishop.png";
+    bBishop.src = "./Assets/black_bishop.png";
     bPawn = new Image();
-    bPawn.src = "/Assets/black_pawn.png";
+    bPawn.src = "./Assets/black_pawn.png";
 
     setup();
     animate();
