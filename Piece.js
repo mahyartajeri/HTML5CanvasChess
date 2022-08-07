@@ -15,6 +15,12 @@ class Piece{
 
     }
 
+    equals(p2){
+        if (this.x == p2.x && this.y == p2.y && this.color == p2.color){
+            return true
+        }
+    }  
+
     inBounds(x, y){
         return x >= 0 && x < 8 && y >= 0 && y < 8;
     }

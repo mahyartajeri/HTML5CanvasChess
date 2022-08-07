@@ -45,6 +45,26 @@ class Board{
         }
     }
 
+    clone(){
+        let b2 = new Board()
+        b2.wp = []
+        b2.bp = []
+        b2.legalMoves = []
+        b2.turn = this.turn
+        for(let i = 0; i < this.wp.length; i++){
+            b2.wp[i] = this.wp[i].clone()
+        }
+        for(let i = 0; i < this.bp.length; i++){
+            b2.bp[i] = this.bp[i].clone()
+        }
+
+        for(let i = 0; i < this.legalMoves.length; i++){
+            b2.legalMoves[i] = this.legalMoves[i].clone()
+        }
+
+        return b2
+    }
+
     show(){
         for(let i = 0; i < this.wp.length; i++){
             this.wp[i].show();
@@ -98,7 +118,6 @@ class Board{
             }
         }
     }
-
 
     findLegalMoves(){
         if(this.turn){
@@ -391,17 +410,85 @@ class Board{
         this.bp = [];
     }
     
+    inCheck(color){
+        let kingPos = [-1, -1]
+        // Check if White King is in Check
+        if(color){
+            // get white king pos
+            for(let i = 0; i < this.wp.length; i++){
+                if(this.wp[i] instanceof King){
+                    kingPos = [this.wp[i].x, this.wp[i].y]
+                }
+            }
+            for(let i = 0; i < this.bp.length; i++){
+                if(this.bp[i].canMoveTo(this, kingPos[0], kingPos[1])){
+                    return true
+                }
+            }
+        }
+        else{
+            // get black king pos
+            for(let i = 0; i < this.bp.length; i++){
+                if(this.bp[i] instanceof King){
+                    kingPos = [this.bp[i].x, this.bp[i].y]
+                }
+            }
+            for(let i = 0; i < this.wp.length; i++){
+                if(this.wp[i].canMoveTo(this, kingPos[0], kingPos[1])){
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    equals(b2){
+        // Check if same number of pieces
+        if(this.wp.length != b2.wp.length || this.bp.length != b2.wp.length) return false
+
+        // must be the same player's move
+        if(this.turn != b2.turn) return false
+        
+        // check if pieces are the same
+        for(let i = 0; i < this.wp.length; i++){
+            if(!this.wp[i].equals(b2.wp[i])) return false
+            if(!this.bp[i].equals(b2.bp[i])) return false
+        }
+
+        // same possible moves
+        for(let i = 0; i < this.legalMoves.length; i++){
+            if(!this.legalMoves[i].equals(b2.legalMoves[i])) return false
+        }
+
+        return true
+    }
+
+    checkForRepetition(){
+       
+    }
+    
     nextTurn(){
         this.turn = !this.turn;
         this.clearMoves();
         this.clearEnPassants();
         this.findLegalMoves();
-        if(this.legalMoves.length == 0) 
-            {
+        
+        //global boardHistory
+        boardHistory.addBoard(this.clone())
+        console.log("The Same Board: " + boardHistory.history[boardHistory.history.length - 1].equals(boardHistory.history[0]))
+
+        if(this.legalMoves.length == 0){
+            if(this.inCheck(this.turn)){
                 this.checkmate = true
-                console.log("CHECKMATE!")
+                console.log("CHECKMATE")
             }
+            else{
+                console.log("STALEMATE")
+            }
+        }
         console.log(this.legalMoves);
+        console.log("BOARD HISTORY: ", boardHistory.history)
     }
        
 }

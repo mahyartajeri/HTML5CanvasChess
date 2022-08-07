@@ -7,8 +7,8 @@ Move tracking: haven't started
 Board Flipping: Haven't started
 Three fold repetition: Haven't started
 50-turn no capture tie: Haven't started
-Stalemate: Haven't started
-Checkmate: Haven't started
+Stalemate: Done
+Checkmate: Done
 */
 
 
@@ -20,12 +20,22 @@ const height = canvas.height;
 const squareSize = width/8;
 const gridSize = 8;
 const imgSize = 85;
-let board, selectedPiece, moving;
+let board, boardHistory, selectedPiece, moving;
 let wKing, wQueen, wRook, wKnight, wBishop, wPawn, bKing, bQueen, bRook, bKnight, bBishop, bPawn;
 
 let mouse = {
     x: undefined,
     y: undefined,
+}
+
+class BoardHistory{
+    constructor(){
+        this.history = []
+    }
+
+    addBoard(b){
+        this.history.push(b)
+    }
 }
 
 class Move{
@@ -37,10 +47,19 @@ class Move{
         this.promotionTo = undefined;
     }
 
-    
-
     casualty(b){
         return b.isPieceAt(this.x2, this.y2);
+    }
+
+    equals(m2){
+        return this.x1 == m2.x1 && this.x2 == m2.x2 && this.y1 == m2.y1 && this.y2 == m2.y2 && this.promotionTo == m2.promotionTo
+    }
+
+    clone(){
+        let clonedMove = new Move(this.x1, this.y1, this.x2, this.y2)
+        clonedMove.promotionTo = this.promotionTo
+
+        return clonedMove
     }
 }
 
@@ -48,6 +67,8 @@ function setup(){
     board = new Board();
     board.findLegalMoves();
     console.log(board);
+    boardHistory = new BoardHistory();
+    boardHistory.addBoard(board.clone())
     selectedPiece = undefined;
     moving = false;
 }
