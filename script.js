@@ -4,7 +4,7 @@ En passant: done
 Pawn promotion: done
 Castling: done
 Move tracking: Done
-Board Flipping: Haven't started
+Board Flipping: Done
 Three fold repetition: Done
 50-turn no capture tie: Done
 Draw due to insufficient material: Done
@@ -20,7 +20,7 @@ const width = canvas.width;
 const height = canvas.height;
 const squareSize = width / 8;
 const gridSize = 8;
-const imgSize = 85;
+const imgSize = 100;
 let board, boardHistory, selectedPiece, moving;
 let wKing, wQueen, wRook, wKnight, wBishop, wPawn, bKing, bQueen, bRook, bKnight, bBishop, bPawn;
 let potentialMove = undefined
@@ -31,6 +31,8 @@ let ranks = "12345678".split("").reverse()
 let mouse = {
     x: undefined,
     y: undefined,
+    cx: undefined,
+    cy: undefined,
 }
 
 class BoardHistory {
@@ -93,6 +95,17 @@ function setup() {
     boardHistory.addBoard(board.clone())
     selectedPiece = undefined;
     moving = false;
+
+    // ctx.transform(1, 0, 0, 1, width, height)
+    // ctx.rotate(Math.PI)
+}
+
+function complementCoordinates(coordinate) {
+    return [7 - coordinate[0], 7 - coordinate[1]]
+}
+
+function complementMouseCoordinates(coordinate) {
+    return [width - coordinate[0], height - coordinate[1]]
 }
 
 window.onload = function () {
@@ -133,6 +146,13 @@ canvas.addEventListener("mousedown", function (event) {
         let x = Math.floor(event.x / squareSize);
         let y = Math.floor(event.y / squareSize);
 
+        // TEMP
+        if (!board.turn) {
+            newCoords = complementCoordinates([x, y])
+            x = newCoords[0]
+            y = newCoords[1]
+        }
+
         if (board.isPieceAt(x, y)) selectedPiece = board.pieceAt(x, y);
         else return;
         if (selectedPiece.color != board.turn) {
@@ -144,6 +164,12 @@ canvas.addEventListener("mousedown", function (event) {
         moving = true;
         selectedPiece.px = mouse.x - selectedPiece.img.width / 2;
         selectedPiece.py = mouse.y - selectedPiece.img.height / 2;
+
+        // TEMP
+        if (!board.turn) {
+            selectedPiece.px = mouse.cx - selectedPiece.img.width / 2;
+            selectedPiece.py = mouse.cy - selectedPiece.img.height / 2;
+        }
     }
 });
 
@@ -181,6 +207,13 @@ canvas.addEventListener("mouseup", function (event) {
         let x = Math.floor(event.x / squareSize);
         let y = Math.floor(event.y / squareSize);
 
+        // TEMP
+        if (!board.turn) {
+            newCoords = complementCoordinates([x, y])
+            x = newCoords[0]
+            y = newCoords[1]
+        }
+
         potentialMove = new Move(selectedPiece.x, selectedPiece.y, x, y);
 
         if (board.hasMove(potentialMove)) {
@@ -213,18 +246,39 @@ canvas.addEventListener("mouseup", function (event) {
 canvas.addEventListener("mousemove", function (event) {
     mouse.x = event.x;
     mouse.y = event.y;
+    newCoords = complementMouseCoordinates([mouse.x, mouse.y])
+    mouse.cx = newCoords[0]
+    mouse.cy = newCoords[1]
+
+    //console.log(mouse.cx)
+
+
     if (moving) {
         selectedPiece.px = mouse.x - selectedPiece.img.width / 2;
         selectedPiece.py = mouse.y - selectedPiece.img.height / 2;
     }
+
+    // TEMP
+    if (moving && !board.turn) {
+
+        selectedPiece.px = mouse.cx - selectedPiece.img.width / 2;
+        selectedPiece.py = mouse.cy - selectedPiece.img.height / 2;
+    }
+
+    //console.log(mouse)
 });
 
 function showPossibleMoves() {
     let pm = selectedPiece.getPossibleMoves(board);
 
+    // TEMP for board switching
     for (let i = 0; i < pm.length; i++) {
         ctx.fillStyle = "yellow";
-        ctx.fillRect(pm[i].x2 * squareSize, pm[i].y2 * squareSize, squareSize, squareSize);
+        if (board.turn) ctx.fillRect(pm[i].x2 * squareSize, pm[i].y2 * squareSize, squareSize, squareSize);
+        else {
+            [newX, newY] = complementCoordinates([pm[i].x2, pm[i].y2])
+            ctx.fillRect(newX * squareSize, newY * squareSize, squareSize, squareSize);
+        }
     }
 }
 
@@ -253,5 +307,10 @@ function animate() {
         //console.log(board.promotion);
     }
     //console.log(mouse.x, mouse.y);
+
+    if (board.checkmate) {
+        alert("Checkmate")
+        return
+    }
     requestAnimationFrame(animate);
 }

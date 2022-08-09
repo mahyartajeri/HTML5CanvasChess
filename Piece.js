@@ -251,7 +251,8 @@ class Piece {
         this.py = this.y * squareSize + squareSize / 2;
     }
 
-    show() {
+
+    show(turn) {
         /*
         ctx.font = "30px arial";
         if(this.color){
@@ -260,7 +261,14 @@ class Piece {
         else ctx.strokeStyle = "black";
         ctx.strokeText(this.symbol, this.px, this.py);
         */
-        ctx.drawImage(this.img, this.px, this.py, imgSize, imgSize);
+        if (turn) {
+            ctx.drawImage(this.img, this.px, this.py, imgSize, imgSize);
+        } else {
+            let x = this.px / squareSize;
+            let y = this.py / squareSize;
+            let newCoords = complementCoordinates([x, y])
+            ctx.drawImage(this.img, newCoords[0] * squareSize, newCoords[1] * squareSize, imgSize, imgSize)
+        }
 
     }
 

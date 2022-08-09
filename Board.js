@@ -94,10 +94,10 @@ class Board {
 
     show() {
         for (let i = 0; i < this.wp.length; i++) {
-            this.wp[i].show();
+            this.wp[i].show(this.turn);
         }
         for (let i = 0; i < this.bp.length; i++) {
-            this.bp[i].show();
+            this.bp[i].show(this.turn);
         }
     }
     isPieceAt(x, y) {
@@ -413,7 +413,7 @@ class Board {
 
     showPromotions() {
         for (let i = 0; i < this.promotions.length; i++) {
-            this.promotions[i].show();
+            this.promotions[i].show(true);
         }
     }
 
