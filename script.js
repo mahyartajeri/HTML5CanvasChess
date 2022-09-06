@@ -28,6 +28,8 @@ let potentialMove = undefined
 let files = "abcdefgh".split("")
 let ranks = "12345678".split("").reverse()
 
+const moveLog = document.getElementById("moveLog");
+
 let mouse = {
     x: undefined,
     y: undefined,
@@ -48,9 +50,15 @@ class BoardHistory {
 
     addNotation(n) {
         if (this.history.length % 2 == 1) {
-            this.notation += Math.ceil(this.history.length / 2).toString() + "." + n + " "
+            this.notation += Math.ceil(this.history.length / 2).toString() + ".\t" + n
+            let newRow = moveLog.insertRow()
+            let cell = newRow.insertCell()
+            cell.innerHTML = Math.ceil(this.history.length / 2).toString() + ".\t" + n
         } else {
-            this.notation += n + " "
+            this.notation += n
+            let lastRow = moveLog.rows[moveLog.rows.length - 1];
+            let cell = lastRow.insertCell()
+            cell.innerHTML = n
         }
     }
 }
@@ -143,8 +151,8 @@ window.onload = function () {
 
 canvas.addEventListener("mousedown", function (event) {
     if (!moving && board.promotion.promotingState == 0) {
-        let x = Math.floor(event.x / squareSize);
-        let y = Math.floor(event.y / squareSize);
+        let x = Math.floor(mouse.x / squareSize);
+        let y = Math.floor(mouse.y / squareSize);
 
         // TEMP
         if (!board.turn) {
@@ -162,8 +170,8 @@ canvas.addEventListener("mousedown", function (event) {
 
         selectedPiece.moving = true;
         moving = true;
-        selectedPiece.px = mouse.x - selectedPiece.img.width / 2;
-        selectedPiece.py = mouse.y - selectedPiece.img.height / 2;
+        selectedPiece.px = mouse.x - selectedPiece.img.width / 2 * (canvas.width / 800);
+        selectedPiece.py = mouse.y - selectedPiece.img.height / 2 * (canvas.height / 800);
 
         // TEMP
         if (!board.turn) {
@@ -204,8 +212,8 @@ canvas.addEventListener("click", function (event) {
 
 canvas.addEventListener("mouseup", function (event) {
     if (moving) {
-        let x = Math.floor(event.x / squareSize);
-        let y = Math.floor(event.y / squareSize);
+        let x = Math.floor(mouse.x / squareSize);
+        let y = Math.floor(mouse.y / squareSize);
 
         // TEMP
         if (!board.turn) {
@@ -244,8 +252,16 @@ canvas.addEventListener("mouseup", function (event) {
 });
 
 canvas.addEventListener("mousemove", function (event) {
-    mouse.x = event.x;
-    mouse.y = event.y;
+
+    let cRect = canvas.getBoundingClientRect(); // Gets CSS pos, and width/height
+    let scaleX = canvas.width / cRect.width;
+    let scaleY = canvas.height / cRect.height;
+    let canvasX = (event.clientX - cRect.left) * scaleX; // Subtract the 'left' of the canvas 
+    let canvasY = (event.clientY - cRect.top) * scaleY; // from the X/Y positions to make 
+
+    mouse.x = canvasX
+    mouse.y = canvasY
+
     newCoords = complementMouseCoordinates([mouse.x, mouse.y])
     mouse.cx = newCoords[0]
     mouse.cy = newCoords[1]
@@ -254,15 +270,15 @@ canvas.addEventListener("mousemove", function (event) {
 
 
     if (moving) {
-        selectedPiece.px = mouse.x - selectedPiece.img.width / 2;
-        selectedPiece.py = mouse.y - selectedPiece.img.height / 2;
+        selectedPiece.px = mouse.x - selectedPiece.img.width / 2 * (canvas.width / 800);
+        selectedPiece.py = mouse.y - selectedPiece.img.height / 2 * (canvas.height / 800);
     }
 
     // TEMP
     if (moving && !board.turn) {
 
-        selectedPiece.px = mouse.cx - selectedPiece.img.width / 2;
-        selectedPiece.py = mouse.cy - selectedPiece.img.height / 2;
+        selectedPiece.px = mouse.cx - selectedPiece.img.width / 2 * (canvas.width / 800);
+        selectedPiece.py = mouse.cy - selectedPiece.img.height / 2 * (canvas.height / 800);
     }
 
     //console.log(mouse)
@@ -273,7 +289,7 @@ function showPossibleMoves() {
 
     // TEMP for board switching
     for (let i = 0; i < pm.length; i++) {
-        ctx.fillStyle = "yellow";
+        ctx.fillStyle = "#D63384";
         if (board.turn) ctx.fillRect(pm[i].x2 * squareSize, pm[i].y2 * squareSize, squareSize, squareSize);
         else {
             [newX, newY] = complementCoordinates([pm[i].x2, pm[i].y2])
@@ -285,7 +301,7 @@ function showPossibleMoves() {
 function drawSquares() {
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-            if ((j + i) % 2 == 0) ctx.fillStyle = "beige";
+            if ((j + i) % 2 == 0) ctx.fillStyle = "white";
             else ctx.fillStyle = "grey";
             ctx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
 

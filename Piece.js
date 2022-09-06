@@ -262,12 +262,12 @@ class Piece {
         ctx.strokeText(this.symbol, this.px, this.py);
         */
         if (turn) {
-            ctx.drawImage(this.img, this.px, this.py, imgSize, imgSize);
+            ctx.drawImage(this.img, this.px, this.py, imgSize * canvas.width / 800, imgSize * canvas.height / 800);
         } else {
             let x = this.px / squareSize;
             let y = this.py / squareSize;
             let newCoords = complementCoordinates([x, y])
-            ctx.drawImage(this.img, newCoords[0] * squareSize, newCoords[1] * squareSize, imgSize, imgSize)
+            ctx.drawImage(this.img, newCoords[0] * squareSize, newCoords[1] * squareSize, imgSize * canvas.width / 800, imgSize * canvas.height / 800)
         }
 
     }

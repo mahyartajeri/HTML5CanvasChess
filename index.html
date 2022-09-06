@@ -4,11 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
     <title>Chess</title>
 </head>
 <body>
     
-    <canvas id="canvas" width="800", height="800"></canvas>
+    <div class="chess">
+        <canvas id="canvas" width="800", height="800"></canvas>
+        <!-- <textarea id="moveLog" draggable="false" readonly="true" rows="20"></textarea> -->
+        <p>Move Log</p>
+        <table id="moveLog">
+        </table>
+    </div>
+
     <script src="Board.js"></script>
     <script src="Piece.js"></script>
     <script src="script.js"></script>

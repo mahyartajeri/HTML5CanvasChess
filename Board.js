@@ -533,6 +533,13 @@ class Board {
     }
 
     generateNotation(move, symbol, color) {
+
+        // Check for short and long castle
+        if (symbol == "K" && Math.abs(move.x1 - move.x2) > 1) {
+            if (move.x2 - move.x1 > 0) return "O-O"
+            else return "O-O-O"
+        }
+
         let fileAdded = false
         let rankAdded = false
 
@@ -545,7 +552,7 @@ class Board {
         // Check for ambiguity (file, rank, or both)
         for (let i = 0; i < this.legalMoves.length; i++) {
             let lm = this.legalMoves[i]
-            // Can go to same sqaure, but we don't want to include the piece itself
+            // Can go to same square, but we don't want to include the piece itself
             if (lm.x2 == move.x2 && lm.y2 == move.y2 && (lm.x1 != move.x1 || lm.y1 != move.y1)) {
                 // Check for correct color and symbol
                 if (this.pieceAt(lm.x1, lm.y1).symbol == symbol && this.pieceAt(lm.x1, lm.y1).color == color && symbol != "P") {
@@ -605,6 +612,8 @@ class Board {
         console.log("50 move rule: ", this.fiftyMoveRule())
         console.log("Insufficient material: ", this.checkForInsufficientMaterial())
         console.log("NOTATION: ", boardHistory.notation)
+        // moveLog.innerHTML = boardHistory.notation
+
 
         if (this.legalMoves.length == 0) {
             if (this.inCheck(this.turn)) {
