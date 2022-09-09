@@ -261,7 +261,7 @@ class Piece {
         else ctx.strokeStyle = "black";
         ctx.strokeText(this.symbol, this.px, this.py);
         */
-        if (turn) {
+        if (turn || !boardFlipCheckBox.checked) {
             ctx.drawImage(this.img, this.px, this.py, imgSize * canvas.width / 800, imgSize * canvas.height / 800);
         } else {
             let x = this.px / squareSize;

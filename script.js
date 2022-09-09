@@ -29,6 +29,9 @@ let files = "abcdefgh".split("")
 let ranks = "12345678".split("").reverse()
 
 const moveLog = document.getElementById("moveLog");
+const boardFlipCheckBox = document.getElementById("boardFlip")
+const message = document.getElementById("message");
+const playAgainButton = document.getElementById("playAgain");
 
 let mouse = {
     x: undefined,
@@ -155,7 +158,7 @@ canvas.addEventListener("mousedown", function (event) {
         let y = Math.floor(mouse.y / squareSize);
 
         // TEMP
-        if (!board.turn) {
+        if (!board.turn && boardFlipCheckBox.checked) {
             newCoords = complementCoordinates([x, y])
             x = newCoords[0]
             y = newCoords[1]
@@ -174,7 +177,7 @@ canvas.addEventListener("mousedown", function (event) {
         selectedPiece.py = mouse.y - selectedPiece.img.height / 2 * (canvas.height / 800);
 
         // TEMP
-        if (!board.turn) {
+        if (!board.turn && boardFlipCheckBox.checked) {
             selectedPiece.px = mouse.cx - selectedPiece.img.width / 2;
             selectedPiece.py = mouse.cy - selectedPiece.img.height / 2;
         }
@@ -216,7 +219,7 @@ canvas.addEventListener("mouseup", function (event) {
         let y = Math.floor(mouse.y / squareSize);
 
         // TEMP
-        if (!board.turn) {
+        if (!board.turn && boardFlipCheckBox.checked) {
             newCoords = complementCoordinates([x, y])
             x = newCoords[0]
             y = newCoords[1]
@@ -275,7 +278,7 @@ canvas.addEventListener("mousemove", function (event) {
     }
 
     // TEMP
-    if (moving && !board.turn) {
+    if (moving && !board.turn && boardFlipCheckBox.checked) {
 
         selectedPiece.px = mouse.cx - selectedPiece.img.width / 2 * (canvas.width / 800);
         selectedPiece.py = mouse.cy - selectedPiece.img.height / 2 * (canvas.height / 800);
@@ -289,8 +292,8 @@ function showPossibleMoves() {
 
     // TEMP for board switching
     for (let i = 0; i < pm.length; i++) {
-        ctx.fillStyle = "#D63384";
-        if (board.turn) ctx.fillRect(pm[i].x2 * squareSize, pm[i].y2 * squareSize, squareSize, squareSize);
+        ctx.fillStyle = "rgba(214, 51, 132, 0.7)";
+        if (board.turn || !boardFlipCheckBox.checked) ctx.fillRect(pm[i].x2 * squareSize, pm[i].y2 * squareSize, squareSize, squareSize);
         else {
             [newX, newY] = complementCoordinates([pm[i].x2, pm[i].y2])
             ctx.fillRect(newX * squareSize, newY * squareSize, squareSize, squareSize);
@@ -325,8 +328,43 @@ function animate() {
     //console.log(mouse.x, mouse.y);
 
     if (board.checkmate) {
-        alert("Checkmate")
+        if (board.turn) message.innerHTML = "Checkmate! Black Wins!"
+        else message.innerHTML = "Checkmate! White Wins!"
+        playAgainButton.style.display = "block"
+    }
+
+    if (board.stalemate) {
+        message.innerHTML = "Stalemate! The Game is a Draw!"
+        playAgainButton.style.display = "block"
+    }
+
+    if (board.repetition) {
+        message.innerHTML = "3 Move Repetiton! The Game is a Draw!"
+        playAgainButton.style.display = "block"
+        return
+    }
+
+    if (board.fifty) {
+        message.innerHTML = "50 Moves, no Captures! The Game is a Draw!"
+        playAgainButton.style.display = "block"
+        return
+    }
+
+    if (board.insufficientMaterial) {
+        message.innerHTML = "Insufficient Material! The Game is a Draw!"
+        playAgainButton.style.display = "block"
         return
     }
     requestAnimationFrame(animate);
 }
+
+function resetGame() {
+    setup()
+    playAgainButton.style.display = "none"
+    moveLog.innerHTML = ""
+    message.innerHTML = ""
+    console.log("new boarddd", board)
+    requestAnimationFrame(animate)
+}
+
+playAgainButton.addEventListener("click", resetGame, false);

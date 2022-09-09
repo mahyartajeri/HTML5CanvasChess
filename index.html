@@ -12,9 +12,16 @@
     <div class="chess">
         <canvas id="canvas" width="800", height="800"></canvas>
         <!-- <textarea id="moveLog" draggable="false" readonly="true" rows="20"></textarea> -->
-        <p>Move Log</p>
-        <table id="moveLog">
-        </table>
+        <div class="info">
+            <p>Move Log</p>
+            <table id="moveLog">
+            </table>
+            <br>
+            <input type="checkbox" id="boardFlip" checked="true">
+            <label for="boardFlip">Flip Board For Black</label>
+            <p id="message"></p>
+            <button id="playAgain">Play Again</button>
+        </div>
     </div>
 
     <script src="Board.js"></script>

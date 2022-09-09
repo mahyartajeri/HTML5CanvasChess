@@ -7,6 +7,10 @@ class Board {
         this.legalMoves = [];
         this.turn = true;
         this.checkmate = false
+        this.stalemate = false
+        this.repetition = false
+        this.fifty = false
+        this.insufficientMaterial = false
         this.initializePieces();
         this.promotion = {
             promotingState: false,
@@ -614,15 +618,23 @@ class Board {
         console.log("NOTATION: ", boardHistory.notation)
         // moveLog.innerHTML = boardHistory.notation
 
-
+        // Checkmate and Stalemate
         if (this.legalMoves.length == 0) {
             if (this.inCheck(this.turn)) {
                 this.checkmate = true
                 console.log("CHECKMATE")
             } else {
+                this.stalemate = "true"
                 console.log("STALEMATE")
             }
         }
+
+        // Other draws
+        if (this.checkForRepetition()) this.repetition = true
+        else if (this.fiftyMoveRule()) this.fifty = true
+        else if (this.checkForInsufficientMaterial()) this.insufficientMaterial = true
+
+
         console.log(this.legalMoves);
         console.log("BOARD HISTORY: ", boardHistory.history)
     }
