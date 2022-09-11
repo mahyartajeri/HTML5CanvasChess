@@ -289,6 +289,7 @@ class Board {
                 }
             }
         }
+        castleSound.play()
     }
 
     enPassantCapture(color, x, y) {
@@ -363,6 +364,7 @@ class Board {
                 if (this == board) {
                     this.noCaptureCounter = -1
                     console.log("---------------CApturedd sheesh----------------")
+                    capturePieceSound.play()
                 }
                 return;
             }
@@ -373,6 +375,7 @@ class Board {
                 if (this == board) {
                     this.noCaptureCounter = -1
                     console.log("---------------CApturedd sheesh----------------")
+                    capturePieceSound.play()
                 }
                 return;
             }
@@ -538,17 +541,26 @@ class Board {
 
     generateNotation(move, symbol, color) {
 
+        // files and ranks are global arrays
+        let notationString = ""
+
         // Check for short and long castle
         if (symbol == "K" && Math.abs(move.x1 - move.x2) > 1) {
-            if (move.x2 - move.x1 > 0) return "O-O"
-            else return "O-O-O"
+            if (move.x2 - move.x1 > 0) {
+                notationString = "O-O"
+            } else {
+                notationString = "O-O-O"
+            }
+            let b2 = this.generateNewBoard(move)
+            b2.findLegalMoves()
+            if (this.inCheck(!color) && b2.legalMoves.length == 0) notationString += "#"
+            else if (this.inCheck(!color)) notationString += "+"
+
+            return notationString
         }
 
         let fileAdded = false
         let rankAdded = false
-
-        // files and ranks are global arrays
-        let notationString = ""
 
         // Add symbol of attacking piece (except pawn)
         if (symbol != "P" && !move.promotionTo) notationString += symbol
@@ -603,6 +615,8 @@ class Board {
     }
 
     nextTurn() {
+        if (this.inCheck(!this.turn)) checkSound.play()
+        else if (this.noCaptureCounter >= 0) movePieceSound.play()
         this.turn = !this.turn;
         this.noCaptureCounter += 1
         this.clearMoves();
